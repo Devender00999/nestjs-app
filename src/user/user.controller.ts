@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
+import { UserDto, UserParamDto } from './dto/user.dto';
 import { User } from './interface/user';
 import { UserService } from './user.service';
 
@@ -12,17 +22,20 @@ export class UserController {
   }
 
   @Get(':email')
-  getUser(@Param('email') email: string): User {
-    return this.userService.getUser(email);
+  @UsePipes(new ValidationPipe())
+  getUser(@Param() params: UserParamDto): User {
+    return this.userService.getUser(params.email);
   }
 
   @Post()
-  addUser(@Body() user: User): User {
+  @UsePipes(new ValidationPipe())
+  addUser(@Body() user: UserDto): User {
     return this.userService.addUser(user);
   }
 
   @Delete(':email')
-  deleteUser(@Param('email') email: string): User {
-    return this.userService.getUser(email);
+  @UsePipes(new ValidationPipe())
+  deleteUser(@Param() params: UserParamDto): User {
+    return this.userService.deleteUser(params.email);
   }
 }
