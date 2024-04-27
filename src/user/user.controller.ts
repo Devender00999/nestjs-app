@@ -5,14 +5,14 @@ import {
   Get,
   Param,
   Post,
-  UseFilters,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
+import * as Joi from 'joi';
 import { UserDto, UserParamDto } from './dto/user.dto';
 import { User } from './interface/user';
+import { JoiValidationPipe } from './pipe';
 import { UserService } from './user.service';
-import { HttpExceptionFilter } from './filter';
 
 @Controller('users')
 export class UserController {
@@ -30,8 +30,15 @@ export class UserController {
   }
 
   @Post()
-  @UsePipes(new ValidationPipe())
-  @UseFilters(HttpExceptionFilter)
+  @UsePipes(
+    new JoiValidationPipe(
+      Joi.object({
+        username: Joi.string().required(),
+        email: Joi.string().email().min(6).required(),
+      }),
+    ),
+  )
+  // @UseFilters(HttpExceptionFilter)
   addUser(@Body() user: UserDto): User {
     return this.userService.addUser(user);
   }
@@ -39,6 +46,7 @@ export class UserController {
   @Delete(':email')
   @UsePipes(new ValidationPipe())
   deleteUser(@Param() params: UserParamDto): User {
+    console.log(params);
     return this.userService.deleteUser(params.email);
   }
 }
