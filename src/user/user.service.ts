@@ -7,7 +7,10 @@ import { User } from './interface/user';
 
 @Injectable()
 export class UserService {
-  private users: User[] = [];
+  private users: User[] = [
+    { email: 'devender@gmail.com', username: 'devender' },
+    { email: 'andrew@gmail.com', username: 'andrew' },
+  ];
 
   getUsers(): User[] {
     return this.users;
